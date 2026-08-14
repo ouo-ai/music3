@@ -2,12 +2,13 @@
 
 import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Info, Loader2, Mic2, Music2, Wand2 } from "lucide-react"
+import { Check, ChevronDown, Info, Loader2, Mic2, Music2, Wand2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
   DEFAULT_GENERATOR_VALUES,
   STYLE_PRESETS,
   SUNO_MODELS,
+  SUNO_MODEL_META,
   buildGenerateSearch,
   readJson,
   type GeneratorValues,
@@ -32,6 +33,7 @@ export function GeneratorForm({
     ...initialValues,
   })
   const [showAdvanced, setShowAdvanced] = useState(false)
+  const [modelOpen, setModelOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -207,20 +209,62 @@ export function GeneratorForm({
           </button>
         </div>
 
-        <label className="flex items-center gap-2 text-xs text-white/50">
-          Model
-          <select
-            value={values.model}
-            onChange={(e) => update("model", e.target.value as GeneratorValues["model"])}
-            className="border border-white/10 bg-black/30 px-3 py-2 text-sm text-white outline-none focus:border-amber-500/50"
+        <div className="relative min-w-[220px]">
+          <button
+            type="button"
+            aria-haspopup="listbox"
+            aria-expanded={modelOpen}
+            onClick={() => setModelOpen((open) => !open)}
+            className="flex w-full items-center justify-between gap-4 border border-white/10 bg-black/30 px-3 py-2 text-left outline-none transition-colors hover:border-white/20 focus-visible:border-amber-500/60"
           >
-            {SUNO_MODELS.map((model) => (
-              <option key={model} value={model} className="bg-zinc-900">
-                {model}
-              </option>
-            ))}
-          </select>
-        </label>
+            <span className="min-w-0">
+              <span className="block text-[10px] uppercase tracking-[0.16em] text-white/40">Model</span>
+              <span className="mt-0.5 block truncate text-sm text-white">{SUNO_MODEL_META[values.model].label}</span>
+            </span>
+            <ChevronDown className={cn("h-4 w-4 shrink-0 text-white/45 transition-transform", modelOpen && "rotate-180")} />
+          </button>
+          {modelOpen && (
+            <>
+              <button
+                type="button"
+                aria-label="Close model menu"
+                className="fixed inset-0 z-20 cursor-default"
+                onClick={() => setModelOpen(false)}
+              />
+              <div
+                role="listbox"
+                aria-label="Suno model"
+                className="absolute right-0 z-30 mt-2 w-full min-w-[240px] border border-white/10 bg-zinc-950/95 p-1 shadow-2xl backdrop-blur-md"
+              >
+                {SUNO_MODELS.map((model) => {
+                  const selected = values.model === model
+                  return (
+                    <button
+                      key={model}
+                      type="button"
+                      role="option"
+                      aria-selected={selected}
+                      onClick={() => {
+                        update("model", model)
+                        setModelOpen(false)
+                      }}
+                      className={cn(
+                        "flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left transition-colors",
+                        selected ? "bg-amber-500/12 text-white" : "text-white/75 hover:bg-white/5 hover:text-white",
+                      )}
+                    >
+                      <span>
+                        <span className="block text-sm">{SUNO_MODEL_META[model].label}</span>
+                        <span className="mt-0.5 block text-[11px] text-white/40">{SUNO_MODEL_META[model].hint}</span>
+                      </span>
+                      {selected && <Check className="h-3.5 w-3.5 text-amber-400" />}
+                    </button>
+                  )
+                })}
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       {values.customMode && (

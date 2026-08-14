@@ -1,6 +1,15 @@
 export const SUNO_MODELS = ["V5_5", "V5", "V4_5PLUS", "V4_5ALL", "V4_5", "V4"] as const
 export type SunoModel = (typeof SUNO_MODELS)[number]
 
+export const SUNO_MODEL_META: Record<SunoModel, { label: string; hint: string }> = {
+  V5_5: { label: "Suno V5.5", hint: "Latest · optional duration" },
+  V5: { label: "Suno V5", hint: "Current generation" },
+  V4_5PLUS: { label: "Suno V4.5+", hint: "Extended V4.5" },
+  V4_5ALL: { label: "Suno V4.5 All", hint: "Broader V4.5 mix" },
+  V4_5: { label: "Suno V4.5", hint: "Stable V4 line" },
+  V4: { label: "Suno V4", hint: "Shorter prompt limit" },
+}
+
 export const STYLE_PRESETS = [
   "Pop",
   "Lo-fi",
