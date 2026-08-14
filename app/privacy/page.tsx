@@ -5,7 +5,7 @@ import { Music2 } from "lucide-react"
 export const metadata: Metadata = {
   title: "Privacy",
   description:
-    "How the Music 3.0 landing page handles data, including the demo generator and Vercel Analytics.",
+    "How the Music 3.0 landing page handles data, including the live generator and Vercel Analytics.",
   alternates: { canonical: "/privacy" },
 }
 
@@ -23,8 +23,8 @@ export default function PrivacyPage() {
 
         <div className="mt-10 space-y-8 text-sm leading-relaxed text-zinc-300">
           <p>
-            This is the Music 3.0 landing page at music3.ai. It is an independent product site with a first-screen
-            demo generator. It is not a live official audio-model backend.
+            This is the Music 3.0 landing page at music3.ai. The first-screen generator creates real audio through a
+            Kie-hosted Suno API. It is not a first-party Music 3.0 model backend.
           </p>
           <section>
             <h2 className="text-xl text-white">No accounts</h2>
@@ -33,11 +33,11 @@ export default function PrivacyPage() {
             </p>
           </section>
           <section>
-            <h2 className="text-xl text-white">Demo generator</h2>
+            <h2 className="text-xl text-white">Generator</h2>
             <p className="mt-2 text-zinc-400">
-              The Music 3.0 generator posts prompt, style, and vocal/instrumental choices to a local demo API route.
-              That route returns a mock track preview and does not store prompts, create audio files, or call a live
-              production music model.
+              The Music 3.0 generator posts prompt, style, and vocal/instrumental choices to a server-side API route.
+              That route calls a Kie-hosted Suno API to create audio. Prompts are sent to that provider to fulfill the
+              request. This site does not keep a customer prompt database.
             </p>
           </section>
           <section>

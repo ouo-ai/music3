@@ -22,7 +22,7 @@ const faqs: FAQItem[] = [
     id: "2",
     question: "Is the generator on this page connected to a live model?",
     answer:
-      "The generator on this page is a demo preview. It shows the intended prompt, style, and vocal/instrumental workflow, but it does not call a live production audio model and does not render a real audio file — it's here so you can try the interface before subscribing.",
+      "Yes. The Music 3.0 generator sends your prompt to a Kie-hosted Suno API and returns real audio when the task finishes. It is a live third-party generation path, not a first-party Music 3.0 model, and public use may be rate-limited.",
   },
   {
     id: "3",

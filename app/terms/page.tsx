@@ -5,7 +5,7 @@ import { Music2 } from "lucide-react"
 export const metadata: Metadata = {
   title: "Terms of Use",
   description:
-    "Terms for using the Music 3.0 landing page and its demo AI music generator.",
+    "Terms for using the Music 3.0 landing page and its live AI music generator.",
   alternates: { canonical: "/terms" },
 }
 
@@ -23,30 +23,30 @@ export default function TermsPage() {
 
         <div className="mt-10 space-y-8 text-sm leading-relaxed text-zinc-300">
           <p>
-            These terms cover the public Music 3.0 website at music3.ai. The first-screen generator is a demo
-            preview. It does not create a production audio file and does not grant rights in a finished commercial
-            recording.
+            These terms cover the public Music 3.0 website at music3.ai. The first-screen generator creates real audio
+            through a Kie-hosted Suno API. Generated files come from that provider and do not by themselves grant a
+            separate commercial license from Music 3.0.
           </p>
           <section>
-            <h2 className="text-xl text-white">Demo only</h2>
+            <h2 className="text-xl text-white">Third-party generation</h2>
             <p className="mt-2 text-zinc-400">
-              Pricing, export, and licensing copy on the landing page describes the intended Music 3.0 studio
-              product. Until a live model is connected, generated previews are mock responses for interface
-              evaluation only.
+              Pricing, export, and licensing copy on the landing page describes the intended Music 3.0 studio product.
+              The public generator is a live third-party path via Kie/Suno and may be rate-limited or disabled without
+              notice.
             </p>
           </section>
           <section>
             <h2 className="text-xl text-white">Acceptable use</h2>
             <p className="mt-2 text-zinc-400">
-              Do not use the demo endpoint to probe, overload, or attempt to extract hidden model access. The site
-              may rate-limit or disable the demo without notice.
+              Do not use the generator endpoint to probe, overload, or attempt to extract hidden model access. The site
+              may rate-limit or disable generation without notice.
             </p>
           </section>
           <section>
             <h2 className="text-xl text-white">No warranty</h2>
             <p className="mt-2 text-zinc-400">
-              The site is provided as-is. Music 3.0 makes no warranty that the demo will be uninterrupted or that
-              future production audio will match the preview interface.
+              The site is provided as-is. Music 3.0 makes no warranty that third-party generation will be uninterrupted
+              or that returned audio will match every prompt.
             </p>
           </section>
         </div>
