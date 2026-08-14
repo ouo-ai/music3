@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Check, ChevronDown, Info, Loader2, Mic2, Music2, Wand2 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -34,6 +34,8 @@ export function GeneratorForm({
   })
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [modelOpen, setModelOpen] = useState(false)
+  const [modelMenu, setModelMenu] = useState({ top: 0, left: 0, width: 240 })
+  const modelButtonRef = useRef<HTMLButtonElement>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -53,6 +55,31 @@ export function GeneratorForm({
   function update<K extends keyof GeneratorValues>(key: K, value: GeneratorValues[K]) {
     setValues((current) => ({ ...current, [key]: value }))
   }
+
+  useEffect(() => {
+    if (!modelOpen) return
+
+    function placeMenu() {
+      const button = modelButtonRef.current
+      if (!button) return
+      const rect = button.getBoundingClientRect()
+      const width = Math.max(rect.width, 248)
+      const maxLeft = window.innerWidth - width - 16
+      const left = Math.max(16, Math.min(rect.left, maxLeft))
+      const estimatedHeight = 336
+      const openUp = rect.bottom + estimatedHeight > window.innerHeight - 16 && rect.top > estimatedHeight
+      const top = openUp ? Math.max(16, rect.top - estimatedHeight - 8) : rect.bottom + 8
+      setModelMenu({ top, left, width })
+    }
+
+    placeMenu()
+    window.addEventListener("resize", placeMenu)
+    window.addEventListener("scroll", placeMenu, true)
+    return () => {
+      window.removeEventListener("resize", placeMenu)
+      window.removeEventListener("scroll", placeMenu, true)
+    }
+  }, [modelOpen])
 
   async function handleSubmit() {
     if (values.customMode) {
@@ -209,8 +236,9 @@ export function GeneratorForm({
           </button>
         </div>
 
-        <div className="relative min-w-[220px]">
+        <div className="relative z-20 min-w-[220px]">
           <button
+            ref={modelButtonRef}
             type="button"
             aria-haspopup="listbox"
             aria-expanded={modelOpen}
@@ -228,13 +256,14 @@ export function GeneratorForm({
               <button
                 type="button"
                 aria-label="Close model menu"
-                className="fixed inset-0 z-20 cursor-default"
+                className="fixed inset-0 z-[80] cursor-default"
                 onClick={() => setModelOpen(false)}
               />
               <div
                 role="listbox"
                 aria-label="Suno model"
-                className="absolute right-0 z-30 mt-2 w-full min-w-[240px] border border-white/10 bg-zinc-950/95 p-1 shadow-2xl backdrop-blur-md"
+                style={{ top: modelMenu.top, left: modelMenu.left, width: modelMenu.width }}
+                className="fixed z-[90] max-h-[min(360px,calc(100vh-32px))] overflow-y-auto border border-white/10 bg-zinc-950 p-1 shadow-2xl"
               >
                 {SUNO_MODELS.map((model) => {
                   const selected = values.model === model
