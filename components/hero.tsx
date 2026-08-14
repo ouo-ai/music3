@@ -61,6 +61,9 @@ export function Hero() {
               <Link href="#solution" className="transition-colors hover:text-white">
                 How It Works
               </Link>
+              <Link href="/generate" className="transition-colors hover:text-white">
+                Generate
+              </Link>
               <Link href="#features" className="transition-colors hover:text-white">
                 Features
               </Link>
@@ -77,7 +80,7 @@ export function Hero() {
 
             <div className="flex items-center gap-4">
               <Link
-                href="#generator"
+                href="/generate"
                 className="hidden text-sm font-medium text-white transition-colors hover:text-white/80 lg:block"
               >
                 Start Creating
@@ -104,6 +107,13 @@ export function Hero() {
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   How It Works
+                </Link>
+                <Link
+                  href="/generate"
+                  className="py-2 text-white/70 transition-colors hover:text-white"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Generate
                 </Link>
                 <Link
                   href="#features"
@@ -134,7 +144,7 @@ export function Hero() {
                   FAQ
                 </Link>
                 <Link
-                  href="#generator"
+                  href="/generate"
                   className="mt-2 border-t border-zinc-700/30 py-2 font-medium text-white"
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -160,7 +170,7 @@ export function Hero() {
 
           {/* Generator */}
           <div id="generator" className="flex w-full flex-col items-center">
-            <GeneratorForm />
+            <GeneratorForm compact />
           </div>
         </div>
       </div>

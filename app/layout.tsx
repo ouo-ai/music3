@@ -110,7 +110,7 @@ const jsonLd = {
           acceptedAnswer: {
             '@type': 'Answer',
             text:
-              "Yes. The Music 3.0 generator sends your prompt to a Kie-hosted Suno API and returns real audio when the task finishes. It is a live third-party generation path, not a first-party Music 3.0 model, and public use may be rate-limited.",
+              "Yes. Music 3.0 calls Kie's documented Suno generate endpoint. Simple mode sends only a prompt. Custom mode can send title, style, lyrics, vocal gender, negative tags, and V5_5 duration. Each request can return multiple audio variations.",
           },
         },
         {

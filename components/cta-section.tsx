@@ -37,7 +37,7 @@ export function CtaSection() {
             finished track in minutes.
           </p>
           <a
-            href="#generator"
+            href="/generate"
             className="mt-8 inline-block bg-white px-8 py-4 text-sm font-semibold text-black transition-colors hover:bg-white/90"
           >
             Generate a Song

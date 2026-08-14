@@ -1,20 +1,25 @@
 import { NextRequest, NextResponse } from "next/server"
 import {
-  KIE_MODEL,
+  DEFAULT_MODEL,
   asRecord,
+  buildGeneratePayload,
   callKie,
   cleanString,
   getTaskId,
+  isSunoModel,
   normalizeKieResult,
+  parseOptionalNumber,
   upstreamError,
+  validateGenerateInput,
+  type GenerateInput,
+  type SunoModel,
+  type VocalGender,
 } from "@/lib/kie-suno"
 
 export const runtime = "nodejs"
 
 const GENERATION_WINDOW_MS = 15 * 60 * 1000
 const GENERATIONS_PER_WINDOW = 3
-const MAX_PROMPT = 500
-const MAX_STYLE = 80
 
 type RateEntry = { count: number; resetAt: number }
 const generationRate = new Map<string, RateEntry>()
@@ -59,19 +64,45 @@ export async function POST(request: NextRequest) {
     return json({ ok: false, error: "Invalid request body." }, 400)
   }
 
-  const prompt = cleanString(body.prompt)
-  const style = cleanString(body.style) || "Pop"
-  const mode = body.mode === "instrumental" ? "instrumental" : "vocal"
-  const instrumental = mode === "instrumental"
+  const requestedModel = cleanString(body.model)
+  const model: SunoModel = isSunoModel(requestedModel) ? requestedModel : DEFAULT_MODEL
+  const customMode = body.customMode === true || body.mode === "custom"
+  const instrumental = body.instrumental === true || body.mode === "instrumental"
+  const vocalGenderRaw = cleanString(body.vocalGender)
+  const vocalGender: VocalGender | "" = vocalGenderRaw === "m" || vocalGenderRaw === "f" ? vocalGenderRaw : ""
+  const styleWeight = parseOptionalNumber(body.styleWeight, 0, 1)
+  const weirdnessConstraint = parseOptionalNumber(body.weirdnessConstraint, 0, 1)
+  const audioWeight = parseOptionalNumber(body.audioWeight, 0, 1)
+  const duration = parseOptionalNumber(body.duration, 1, 480)
 
-  if (!prompt) {
-    return json({ ok: false, error: "A prompt or lyric idea is required." }, 400)
+  if (styleWeight === null || weirdnessConstraint === null || audioWeight === null) {
+    return json({ ok: false, error: "Style, weirdness, and audio weights must be numbers between 0 and 1." }, 400)
   }
-  if (prompt.length > MAX_PROMPT) {
-    return json({ ok: false, error: "Keep prompts under 500 characters." }, 400)
+  if (duration === null) {
+    return json({ ok: false, error: "Duration must be a number of seconds between 1 and 480." }, 400)
   }
-  if (style.length > MAX_STYLE) {
-    return json({ ok: false, error: "Keep the style name under 80 characters." }, 400)
+
+  const input: GenerateInput = {
+    customMode,
+    instrumental,
+    prompt: cleanString(body.prompt),
+    style: cleanString(body.style),
+    title: cleanString(body.title),
+    model,
+    negativeTags: cleanString(body.negativeTags) || undefined,
+    vocalGender,
+    styleWeight,
+    weirdnessConstraint,
+    audioWeight,
+    duration,
+    personaId: cleanString(body.personaId) || undefined,
+    personaModel: cleanString(body.personaModel) || undefined,
+    callBackUrl: callbackUrl(request),
+  }
+
+  const validationError = validateGenerateInput(input)
+  if (validationError) {
+    return json({ ok: false, error: validationError }, 400)
   }
 
   const retryAfter = consumeGenerationSlot(request)
@@ -83,19 +114,7 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const composedPrompt = `${prompt}. ${style} style.`
-  if (composedPrompt.length > MAX_PROMPT) {
-    return json({ ok: false, error: "Keep prompts under 500 characters." }, 400)
-  }
-
-  const payload = {
-    prompt: composedPrompt,
-    customMode: false,
-    instrumental,
-    model: KIE_MODEL,
-    callBackUrl: callbackUrl(request),
-  }
-
+  const payload = buildGeneratePayload(input)
   const result = await callKie("/generate", { method: "POST", body: JSON.stringify(payload) })
   const code = asRecord(result.data).code
   const taskId = getTaskId(result.data)
@@ -110,9 +129,13 @@ export async function POST(request: NextRequest) {
     ok: true,
     state: "pending",
     taskId,
-    style,
-    mode,
-    disclaimer: "Generated through a Kie-hosted Suno API. Audio files come from that provider, not a first-party Music 3.0 model.",
+    model,
+    customMode,
+    instrumental,
+    title: input.title || undefined,
+    style: input.style || undefined,
+    disclaimer:
+      "Generated through a Kie-hosted Suno API. Audio files come from that provider, not a first-party Music 3.0 model.",
   })
 }
 

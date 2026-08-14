@@ -41,7 +41,7 @@ export function ProblemSection() {
           </p>
           
           <div className="flex flex-col gap-4 pt-8 sm:flex-row sm:justify-center">
-            <a href="#generator" className="bg-white px-8 py-3 font-semibold text-slate-900 transition-all hover:bg-gray-100 active:scale-95">
+            <a href="/generate" className="bg-white px-8 py-3 font-semibold text-slate-900 transition-all hover:bg-gray-100 active:scale-95">
               Try the Generator
             </a>
             <a href="#solution" className="border border-white/30 px-8 py-3 font-semibold text-white transition-all hover:bg-white/10 active:scale-95">

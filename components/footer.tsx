@@ -50,6 +50,12 @@ export function Footer() {
         {/* Legal Links */}
         <div className="flex items-center gap-6">
           <Link
+            href="/generate"
+            className="text-sm text-zinc-400 transition-colors hover:text-white"
+          >
+            Generate
+          </Link>
+          <Link
             href="/privacy"
             className="text-sm text-zinc-400 transition-colors hover:text-white"
           >

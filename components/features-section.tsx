@@ -185,7 +185,7 @@ export function FeaturesSection({
             className="bg-white text-zinc-900 hover:bg-zinc-200 px-8"
             asChild
           >
-            <a href="#generator">Explore Full Features</a>
+            <a href="/generate">Explore Full Features</a>
           </Button>
           <Button
             size="lg"
